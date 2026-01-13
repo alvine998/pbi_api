@@ -34,7 +34,7 @@ RUN mkdir -p uploads && chown -R nodejs:nodejs uploads
 USER nodejs
 
 # Expose the application port
-EXPOSE 3000
+EXPOSE 4173
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
