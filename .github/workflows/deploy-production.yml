@@ -1,0 +1,56 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST << 'ENDSSH'
+            cd ${{ secrets.PROJECT_PATH }}
+            
+            # Pull latest code
+            git fetch origin main
+            git checkout main
+            git pull origin main
+            
+            # Create .env file
+            echo "${{ secrets.ENV_FILE }}" > .env
+            
+            # Build and deploy with Docker Compose
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+            
+            # Clean up old images
+            docker image prune -f
+            
+            echo "Deployment completed!"
+          ENDSSH
+
+      - name: Verify deployment
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST << 'ENDSSH'
+            sleep 10
+            docker ps | grep pbi-api && echo "Container is running" || echo "Container not found"
+          ENDSSH
