@@ -5,7 +5,13 @@ const { logActivity } = require("../helpers/activityLogger");
 
 exports.listUsers = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      role = "",
+      status = "",
+    } = req.query;
     const offset = (page - 1) * limit;
 
     const { count, rows } = await User.findAndCountAll({
@@ -13,7 +19,10 @@ exports.listUsers = async (req, res) => {
         [Op.or]: [
           { name: { [Op.like]: `%${search}%` } },
           { email: { [Op.like]: `%${search}%` } },
+          { phone: { [Op.like]: `%${search}%` } },
         ],
+        ...(role && { role }),
+        ...(status && { status }),
       },
       limit: parseInt(limit),
       offset: parseInt(offset),
