@@ -36,6 +36,21 @@ const upload = multer({
   },
 });
 
+const MediaController = require("../controllers/MediaController");
+
+const getFileType = (mimetype) => {
+  if (mimetype.startsWith("image/")) return "image";
+  if (mimetype.startsWith("video/")) return "video";
+  if (mimetype.startsWith("audio/")) return "audio";
+  if (
+    mimetype.includes("pdf") ||
+    mimetype.includes("msword") ||
+    mimetype.includes("officedocument")
+  )
+    return "document";
+  return "other";
+};
+
 /**
  * @swagger
  * /v1/upload:
@@ -78,7 +93,7 @@ const upload = multer({
  *                     url:
  *                       type: string
  */
-router.post("/", auth, upload.single("file"), (req, res) => {
+router.post("/", auth, upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res
       .status(400)
@@ -86,14 +101,27 @@ router.post("/", auth, upload.single("file"), (req, res) => {
   }
 
   const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
+  // Save to Media library
+  const media = await MediaController.saveMedia({
+    filename: req.file.filename,
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    url: fileUrl,
+    type: getFileType(req.file.mimetype),
+    userId: req.user ? req.user.id : null,
+  });
+
   res.json({
     message: "File uploaded successfully",
-    file: {
+    file: media || {
       filename: req.file.filename,
       originalname: req.file.originalname,
       path: req.file.path,
       size: req.file.size,
-      url: `${baseUrl}/uploads/${req.file.filename}`,
+      url: fileUrl,
     },
   });
 });
@@ -140,7 +168,7 @@ router.post("/", auth, upload.single("file"), (req, res) => {
  *                       url:
  *                         type: string
  */
-router.post("/multiple", auth, upload.array("files", 10), (req, res) => {
+router.post("/multiple", auth, upload.array("files", 10), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res
       .status(400)
@@ -148,16 +176,32 @@ router.post("/multiple", auth, upload.array("files", 10), (req, res) => {
   }
 
   const baseUrl = `${req.protocol}://${req.get("host")}`;
-  const files = req.files.map((file) => ({
-    filename: file.filename,
-    originalname: file.originalname,
-    size: file.size,
-    url: `${baseUrl}/uploads/${file.filename}`,
-  }));
+  const savedFiles = [];
+
+  for (const file of req.files) {
+    const fileUrl = `${baseUrl}/uploads/${file.filename}`;
+    const media = await MediaController.saveMedia({
+      filename: file.filename,
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      url: fileUrl,
+      type: getFileType(file.mimetype),
+      userId: req.user ? req.user.id : null,
+    });
+    savedFiles.push(
+      media || {
+        filename: file.filename,
+        originalname: file.originalname,
+        size: file.size,
+        url: fileUrl,
+      }
+    );
+  }
 
   res.json({
     message: "Files uploaded successfully",
-    files,
+    files: savedFiles,
   });
 });
 

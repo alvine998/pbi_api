@@ -187,6 +187,37 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        Media: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            filename: { type: "string" },
+            originalname: { type: "string" },
+            mimetype: { type: "string" },
+            size: { type: "integer" },
+            url: { type: "string" },
+            type: {
+              type: "string",
+              enum: ["image", "video", "document", "audio", "other"],
+            },
+            userId: { type: "integer" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
+        SocialMedia: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            platform: { type: "string" },
+            url: { type: "string" },
+            icon: { type: "string" },
+            status: { type: "string", enum: ["active", "inactive"] },
+            sortOrder: { type: "integer" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
         Error: {
           type: "object",
           properties: {

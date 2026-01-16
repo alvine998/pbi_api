@@ -37,6 +37,8 @@ const productCategoryRoutes = require("./routes/productCategories");
 const uploadRoutes = require("./routes/upload");
 const dashboardRoutes = require("./routes/dashboard");
 const eventRoutes = require("./routes/events");
+const mediaRoutes = require("./routes/media");
+const socialMediaRoutes = require("./routes/socialMedia");
 
 // Health check and API info
 app.get("/", (req, res) => {
@@ -66,6 +68,8 @@ app.use("/v1/product/categories", productCategoryRoutes);
 app.use("/v1/upload", uploadRoutes);
 app.use("/v1/dashboard", dashboardRoutes);
 app.use("/v1/events", eventRoutes);
+app.use("/v1/media", mediaRoutes);
+app.use("/v1/social-media", socialMediaRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
