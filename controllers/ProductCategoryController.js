@@ -1,5 +1,6 @@
 const ProductCategory = require("../models/ProductCategory");
 const { Op } = require("sequelize");
+const { logActivity } = require("../helpers/activityLogger");
 
 exports.listCategories = async (req, res) => {
   try {
@@ -55,14 +56,31 @@ exports.getCategoryById = async (req, res) => {
 exports.createCategory = async (req, res) => {
   try {
     const { name, description, image, parentId, status, sortOrder } = req.body;
+
+    // Use uploaded file or provided image URL
+    let categoryImage = image;
+    if (req.file) {
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      categoryImage = `${baseUrl}/uploads/categories/${req.file.filename}`;
+    }
+
     const category = await ProductCategory.create({
       name,
       description,
-      image,
+      image: categoryImage,
       parentId,
       status,
       sortOrder,
     });
+
+    await logActivity(
+      req,
+      "create",
+      "ProductCategory",
+      category.id,
+      `Created category ${category.name}`
+    );
+
     res.status(201).json(category);
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
@@ -81,14 +99,29 @@ exports.updateCategory = async (req, res) => {
         .json({ error: "Not Found", message: "Category not found" });
     }
 
+    // Use uploaded file or provided image URL
+    let categoryImage = image;
+    if (req.file) {
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      categoryImage = `${baseUrl}/uploads/categories/${req.file.filename}`;
+    }
+
     await category.update({
       name,
       description,
-      image,
+      image: categoryImage !== undefined ? categoryImage : category.image,
       parentId,
       status,
       sortOrder,
     });
+
+    await logActivity(
+      req,
+      "update",
+      "ProductCategory",
+      category.id,
+      `Updated category ${category.name}`
+    );
 
     res.json({ message: "Category updated successfully", category });
   } catch (error) {
@@ -107,7 +140,16 @@ exports.deleteCategory = async (req, res) => {
         .json({ error: "Not Found", message: "Category not found" });
     }
 
+    const categoryName = category.name;
     await category.destroy();
+    await logActivity(
+      req,
+      "delete",
+      "ProductCategory",
+      parseInt(id),
+      `Deleted category ${categoryName}`
+    );
+
     res.json({ message: "Category deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });

@@ -1,7 +1,40 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const auth = require("../middleware/auth");
 const ProductCategoryController = require("../controllers/ProductCategoryController");
+
+// Configure multer for icon uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = "uploads/categories";
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "icon-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit for icons
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    if (extname) {
+      return cb(null, true);
+    }
+    cb(new Error("Only image files are allowed"));
+  },
+});
 
 /**
  * @swagger
@@ -89,7 +122,7 @@ router.get("/:id", auth, ProductCategoryController.getCategoryById);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -100,8 +133,12 @@ router.get("/:id", auth, ProductCategoryController.getCategoryById);
  *                 example: Electronics
  *               description:
  *                 type: string
+ *               icon:
+ *                 type: string
+ *                 format: binary
  *               image:
  *                 type: string
+ *                 description: Image URL (if not uploading file)
  *               parentId:
  *                 type: integer
  *               status:
@@ -117,7 +154,12 @@ router.get("/:id", auth, ProductCategoryController.getCategoryById);
  *             schema:
  *               $ref: '#/components/schemas/ProductCategory'
  */
-router.post("/", auth, ProductCategoryController.createCategory);
+router.post(
+  "/",
+  auth,
+  upload.single("icon"),
+  ProductCategoryController.createCategory
+);
 
 /**
  * @swagger
@@ -136,7 +178,7 @@ router.post("/", auth, ProductCategoryController.createCategory);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -144,8 +186,12 @@ router.post("/", auth, ProductCategoryController.createCategory);
  *                 type: string
  *               description:
  *                 type: string
+ *               icon:
+ *                 type: string
+ *                 format: binary
  *               image:
  *                 type: string
+ *                 description: Image URL (if not uploading file)
  *               parentId:
  *                 type: integer
  *               status:
@@ -159,7 +205,12 @@ router.post("/", auth, ProductCategoryController.createCategory);
  *       404:
  *         description: Category not found
  */
-router.put("/:id", auth, ProductCategoryController.updateCategory);
+router.put(
+  "/:id",
+  auth,
+  upload.single("icon"),
+  ProductCategoryController.updateCategory
+);
 
 /**
  * @swagger
