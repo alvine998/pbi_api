@@ -24,6 +24,48 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.register = async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({
+        error: "Validation Error",
+        message: "Email already registered",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role: "User",
+      status: "Active",
+    });
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || "your_jwt_secret_key_here",
+      { expiresIn: "24h" }
+    );
+
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+
+    res.status(201).json({
+      message: "Registration successful",
+      user: userResponse,
+      token,
+    });
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request", message: error.message });
+  }
+};
+
 exports.updateProfile = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
