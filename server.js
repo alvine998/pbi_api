@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
 
 // Database Sync and Server Initiation
 sequelize
-  .sync({ force: false })
+  .sync({ alter: true })
   .then(() => {
     console.log("Database synced successfully");
     app.listen(PORT, () => {
