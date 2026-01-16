@@ -268,6 +268,40 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        UploadResponse: {
+          type: "object",
+          properties: {
+            message: { type: "string" },
+            file: {
+              type: "object",
+              properties: {
+                filename: { type: "string" },
+                originalname: { type: "string" },
+                path: { type: "string" },
+                size: { type: "integer" },
+                url: { type: "string" },
+              },
+            },
+          },
+        },
+        MultipleUploadResponse: {
+          type: "object",
+          properties: {
+            message: { type: "string" },
+            files: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  filename: { type: "string" },
+                  originalname: { type: "string" },
+                  size: { type: "integer" },
+                  url: { type: "string" },
+                },
+              },
+            },
+          },
+        },
       },
     },
   },
