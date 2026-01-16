@@ -38,6 +38,21 @@ const ForumController = require("../controllers/ForumController");
  *     responses:
  *       200:
  *         description: List of forum posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalItems:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Forum'
  */
 router.get("/", auth, ForumController.listForums);
 
@@ -58,8 +73,16 @@ router.get("/", auth, ForumController.listForums);
  *     responses:
  *       200:
  *         description: Forum post details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Forum'
  *       404:
  *         description: Forum post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/:id", auth, ForumController.getForumById);
 
@@ -104,6 +127,16 @@ router.get("/:id", auth, ForumController.getForumById);
  *     responses:
  *       201:
  *         description: Forum post created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Forum'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/", auth, ForumController.createForum);
 
@@ -144,8 +177,21 @@ router.post("/", auth, ForumController.createForum);
  *     responses:
  *       200:
  *         description: Forum post updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 forum:
+ *                   $ref: '#/components/schemas/Forum'
  *       404:
  *         description: Forum post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put("/:id", auth, ForumController.updateForum);
 
@@ -166,8 +212,19 @@ router.put("/:id", auth, ForumController.updateForum);
  *     responses:
  *       200:
  *         description: Forum post deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       404:
  *         description: Forum post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.delete("/:id", auth, ForumController.deleteForum);
 
@@ -188,8 +245,21 @@ router.delete("/:id", auth, ForumController.deleteForum);
  *     responses:
  *       200:
  *         description: Forum post liked
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 likeCount:
+ *                   type: integer
  *       404:
  *         description: Forum post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/:id/like", auth, ForumController.likeForum);
 
@@ -220,6 +290,21 @@ router.post("/:id/like", auth, ForumController.likeForum);
  *     responses:
  *       200:
  *         description: List of comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalItems:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ForumComment'
  */
 router.get("/:id/comments", auth, ForumController.listComments);
 
@@ -254,6 +339,16 @@ router.get("/:id/comments", auth, ForumController.listComments);
  *     responses:
  *       201:
  *         description: Comment added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ForumComment'
+ *       404:
+ *         description: Forum post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/:id/comments", auth, ForumController.addComment);
 
@@ -290,8 +385,21 @@ router.post("/:id/comments", auth, ForumController.addComment);
  *     responses:
  *       200:
  *         description: Comment updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 comment:
+ *                   $ref: '#/components/schemas/ForumComment'
  *       404:
  *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put("/:id/comments/:commentId", auth, ForumController.updateComment);
 
@@ -317,8 +425,19 @@ router.put("/:id/comments/:commentId", auth, ForumController.updateComment);
  *     responses:
  *       200:
  *         description: Comment deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       404:
  *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.delete("/:id/comments/:commentId", auth, ForumController.deleteComment);
 

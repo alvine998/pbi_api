@@ -148,6 +148,25 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        Forum: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            title: { type: "string" },
+            content: { type: "string" },
+            userId: { type: "integer" },
+            userName: { type: "string" },
+            category: { type: "string" },
+            image: { type: "string" },
+            viewCount: { type: "integer" },
+            likeCount: { type: "integer" },
+            commentCount: { type: "integer" },
+            status: { type: "string", enum: ["active", "closed", "archived"] },
+            isPinned: { type: "boolean" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
         Error: {
           type: "object",
           properties: {
