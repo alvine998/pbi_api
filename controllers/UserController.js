@@ -30,6 +30,25 @@ exports.listUsers = async (req, res) => {
   }
 };
 
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ["password"] },
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Not Found", message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request", message: error.message });
+  }
+};
+
 exports.createUser = async (req, res) => {
   try {
     const { name, email, role, status, password } = req.body;
@@ -58,5 +77,46 @@ exports.createUser = async (req, res) => {
           )
         : {},
     });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, role, status, phone } = req.body;
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Not Found", message: "User not found" });
+    }
+
+    await user.update({ name, email, role, status, phone });
+
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+
+    res.json({ message: "User updated successfully", user: userResponse });
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request", message: error.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Not Found", message: "User not found" });
+    }
+
+    await user.destroy();
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request", message: error.message });
   }
 };

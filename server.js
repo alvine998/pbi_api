@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const swaggerUi = require("swagger-ui-express");
 require("dotenv").config();
 const sequelize = require("./config/database");
+const swaggerSpec = require("./config/swagger");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +15,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
+
+// Swagger Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 const authRoutes = require("./routes/auth");
