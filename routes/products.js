@@ -56,7 +56,7 @@ const upload = multer({ dest: "uploads/" });
  *                   items:
  *                     $ref: '#/components/schemas/Product'
  */
-router.get("/", auth, ProductController.listProducts);
+router.get("/", ProductController.listProducts);
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ router.get("/", auth, ProductController.listProducts);
  *       404:
  *         description: Product not found
  */
-router.get("/:id", auth, ProductController.getProductById);
+router.get("/:id", ProductController.getProductById);
 
 /**
  * @swagger

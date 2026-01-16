@@ -9,13 +9,11 @@ const SocialMediaController = require("../controllers/SocialMediaController");
  *   get:
  *     summary: List all social media links
  *     tags: [Social Media]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of social media profiles
  */
-router.get("/", auth, SocialMediaController.listSocialMedia);
+router.get("/", SocialMediaController.listSocialMedia);
 
 /**
  * @swagger

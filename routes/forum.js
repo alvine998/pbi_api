@@ -54,7 +54,7 @@ const ForumController = require("../controllers/ForumController");
  *                   items:
  *                     $ref: '#/components/schemas/Forum'
  */
-router.get("/", auth, ForumController.listForums);
+router.get("/", ForumController.listForums);
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.get("/", auth, ForumController.listForums);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", auth, ForumController.getForumById);
+router.get("/:id", ForumController.getForumById);
 
 /**
  * @swagger
@@ -306,7 +306,7 @@ router.post("/:id/like", auth, ForumController.likeForum);
  *                   items:
  *                     $ref: '#/components/schemas/ForumComment'
  */
-router.get("/:id/comments", auth, ForumController.listComments);
+router.get("/:id/comments", ForumController.listComments);
 
 /**
  * @swagger

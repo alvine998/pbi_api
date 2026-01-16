@@ -58,7 +58,7 @@ const NewsController = require("../controllers/NewsController");
  *                   items:
  *                     $ref: '#/components/schemas/News'
  */
-router.get("/", auth, NewsController.listNews);
+router.get("/", NewsController.listNews);
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.get("/", auth, NewsController.listNews);
  *       404:
  *         description: News not found
  */
-router.get("/:id", auth, NewsController.getNewsById);
+router.get("/:id", NewsController.getNewsById);
 
 /**
  * @swagger

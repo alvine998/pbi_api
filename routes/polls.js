@@ -43,7 +43,7 @@ const PollController = require("../controllers/PollController");
  *                   items:
  *                     $ref: '#/components/schemas/Poll'
  */
-router.get("/", auth, PollController.listPolls);
+router.get("/", PollController.listPolls);
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.get("/", auth, PollController.listPolls);
  *       404:
  *         description: Poll not found
  */
-router.get("/:id", auth, PollController.getPollById);
+router.get("/:id", PollController.getPollById);
 
 /**
  * @swagger

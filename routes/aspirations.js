@@ -53,7 +53,7 @@ const AspirationController = require("../controllers/AspirationController");
  *                   items:
  *                     $ref: '#/components/schemas/Aspiration'
  */
-router.get("/", auth, AspirationController.listAspirations);
+router.get("/", AspirationController.listAspirations);
 
 /**
  * @swagger
@@ -80,7 +80,7 @@ router.get("/", auth, AspirationController.listAspirations);
  *       404:
  *         description: Aspiration not found
  */
-router.get("/:id", auth, AspirationController.getAspirationById);
+router.get("/:id", AspirationController.getAspirationById);
 
 /**
  * @swagger

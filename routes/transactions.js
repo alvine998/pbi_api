@@ -55,7 +55,7 @@ const TransactionController = require("../controllers/TransactionController");
  *                   items:
  *                     $ref: '#/components/schemas/Transaction'
  */
-router.get("/", auth, TransactionController.listTransactions);
+router.get("/", TransactionController.listTransactions);
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ router.get("/", auth, TransactionController.listTransactions);
  *       404:
  *         description: Transaction not found
  */
-router.get("/:id", auth, TransactionController.getTransactionById);
+router.get("/:id", TransactionController.getTransactionById);
 
 /**
  * @swagger
@@ -110,7 +110,6 @@ router.get("/:id", auth, TransactionController.getTransactionById);
  */
 router.get(
   "/number/:transactionNumber",
-  auth,
   TransactionController.getTransactionByNumber
 );
 

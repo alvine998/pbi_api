@@ -9,8 +9,6 @@ const ActivityController = require("../controllers/ActivityController");
  *   get:
  *     summary: Get activity logs
  *     tags: [Activity]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -49,6 +47,6 @@ const ActivityController = require("../controllers/ActivityController");
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", auth, ActivityController.getActivityLog);
+router.get("/", ActivityController.getActivityLog);
 
 module.exports = router;

@@ -54,7 +54,7 @@ const EventController = require("../controllers/EventController");
  *                   items:
  *                     $ref: '#/components/schemas/Event'
  */
-router.get("/", auth, EventController.listEvents);
+router.get("/", EventController.listEvents);
 
 /**
  * @swagger
@@ -80,7 +80,7 @@ router.get("/", auth, EventController.listEvents);
  *       404:
  *         description: Event not found
  */
-router.get("/:id", auth, EventController.getEventById);
+router.get("/:id", EventController.getEventById);
 
 /**
  * @swagger

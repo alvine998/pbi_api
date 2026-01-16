@@ -83,7 +83,7 @@ const upload = multer({
  *                   items:
  *                     $ref: '#/components/schemas/ProductCategory'
  */
-router.get("/", auth, ProductCategoryController.listCategories);
+router.get("/", ProductCategoryController.listCategories);
 
 /**
  * @swagger
@@ -109,7 +109,7 @@ router.get("/", auth, ProductCategoryController.listCategories);
  *       404:
  *         description: Category not found
  */
-router.get("/:id", auth, ProductCategoryController.getCategoryById);
+router.get("/:id", ProductCategoryController.getCategoryById);
 
 /**
  * @swagger

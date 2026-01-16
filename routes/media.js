@@ -35,7 +35,7 @@ const MediaController = require("../controllers/MediaController");
  *       200:
  *         description: List of media files
  */
-router.get("/", auth, MediaController.listMedia);
+router.get("/", MediaController.listMedia);
 
 /**
  * @swagger

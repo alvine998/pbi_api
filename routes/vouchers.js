@@ -51,7 +51,7 @@ const VoucherController = require("../controllers/VoucherController");
  *                   items:
  *                     $ref: '#/components/schemas/Voucher'
  */
-router.get("/", auth, VoucherController.listVouchers);
+router.get("/", VoucherController.listVouchers);
 
 /**
  * @swagger
@@ -77,7 +77,7 @@ router.get("/", auth, VoucherController.listVouchers);
  *       404:
  *         description: Voucher not found
  */
-router.get("/:id", auth, VoucherController.getVoucherById);
+router.get("/:id", VoucherController.getVoucherById);
 
 /**
  * @swagger
@@ -106,7 +106,7 @@ router.get("/:id", auth, VoucherController.getVoucherById);
  *       404:
  *         description: Voucher not found
  */
-router.get("/code/:code", auth, VoucherController.getVoucherByCode);
+router.get("/code/:code", VoucherController.getVoucherByCode);
 
 /**
  * @swagger

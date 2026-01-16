@@ -55,7 +55,7 @@ const DiscountController = require("../controllers/DiscountController");
  *                   items:
  *                     $ref: '#/components/schemas/Discount'
  */
-router.get("/", auth, DiscountController.listDiscounts);
+router.get("/", DiscountController.listDiscounts);
 
 /**
  * @swagger
@@ -63,8 +63,6 @@ router.get("/", auth, DiscountController.listDiscounts);
  *   get:
  *     summary: Get currently active discounts
  *     tags: [Discounts]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of active discounts
@@ -78,7 +76,7 @@ router.get("/", auth, DiscountController.listDiscounts);
  *                   items:
  *                     $ref: '#/components/schemas/Discount'
  */
-router.get("/active", auth, DiscountController.getActiveDiscounts);
+router.get("/active", DiscountController.getActiveDiscounts);
 
 /**
  * @swagger
@@ -104,7 +102,7 @@ router.get("/active", auth, DiscountController.getActiveDiscounts);
  *       404:
  *         description: Discount not found
  */
-router.get("/:id", auth, DiscountController.getDiscountById);
+router.get("/:id", DiscountController.getDiscountById);
 
 /**
  * @swagger

@@ -49,7 +49,7 @@ const DashboardController = require("../controllers/DashboardController");
  *                     revenue:
  *                       type: number
  */
-router.get("/summary", auth, DashboardController.getSummary);
+router.get("/summary", DashboardController.getSummary);
 
 /**
  * @swagger
@@ -78,7 +78,7 @@ router.get("/summary", auth, DashboardController.getSummary);
  *                   items:
  *                     $ref: '#/components/schemas/ActivityLog'
  */
-router.get("/activities", auth, DashboardController.getRecentActivities);
+router.get("/activities", DashboardController.getRecentActivities);
 
 /**
  * @swagger
@@ -107,7 +107,7 @@ router.get("/activities", auth, DashboardController.getRecentActivities);
  *                   items:
  *                     $ref: '#/components/schemas/Transaction'
  */
-router.get("/transactions", auth, DashboardController.getRecentTransactions);
+router.get("/transactions", DashboardController.getRecentTransactions);
 
 /**
  * @swagger
@@ -144,11 +144,7 @@ router.get("/transactions", auth, DashboardController.getRecentTransactions);
  *                       total:
  *                         type: number
  */
-router.get(
-  "/chart/transactions",
-  auth,
-  DashboardController.getTransactionChart
-);
+router.get("/chart/transactions", DashboardController.getTransactionChart);
 
 /**
  * @swagger
@@ -185,6 +181,6 @@ router.get(
  *                       count:
  *                         type: integer
  */
-router.get("/users/stats", auth, DashboardController.getUserStats);
+router.get("/users/stats", DashboardController.getUserStats);
 
 module.exports = router;
