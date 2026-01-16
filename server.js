@@ -35,6 +35,7 @@ const discountRoutes = require("./routes/discounts");
 const transactionRoutes = require("./routes/transactions");
 const productCategoryRoutes = require("./routes/productCategories");
 const uploadRoutes = require("./routes/upload");
+const dashboardRoutes = require("./routes/dashboard");
 
 // Health check and API info
 app.get("/", (req, res) => {
@@ -62,6 +63,7 @@ app.use("/v1/discounts", discountRoutes);
 app.use("/v1/transactions", transactionRoutes);
 app.use("/v1/product/categories", productCategoryRoutes);
 app.use("/v1/upload", uploadRoutes);
+app.use("/v1/dashboard", dashboardRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
