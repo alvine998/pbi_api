@@ -30,6 +30,20 @@ const pollRoutes = require("./routes/polls");
 const notificationRoutes = require("./routes/notifications");
 const chatRoutes = require("./routes/chat");
 const activityRoutes = require("./routes/activity");
+const voucherRoutes = require("./routes/vouchers");
+const discountRoutes = require("./routes/discounts");
+const transactionRoutes = require("./routes/transactions");
+
+// Health check and API info
+app.get("/", (req, res) => {
+  res.json({
+    name: "PBI API",
+    version: "1.0.0",
+    status: "running",
+    documentation: "/api-docs",
+    apiPrefix: "/v1",
+  });
+});
 
 app.use("/v1/auth", authRoutes);
 app.use("/v1/users", userRoutes);
@@ -41,6 +55,9 @@ app.use("/v1/polls", pollRoutes);
 app.use("/v1/notifications", notificationRoutes);
 app.use("/v1/chat", chatRoutes);
 app.use("/v1/activity-log", activityRoutes);
+app.use("/v1/vouchers", voucherRoutes);
+app.use("/v1/discounts", discountRoutes);
+app.use("/v1/transactions", transactionRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
