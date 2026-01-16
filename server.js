@@ -33,6 +33,7 @@ const activityRoutes = require("./routes/activity");
 const voucherRoutes = require("./routes/vouchers");
 const discountRoutes = require("./routes/discounts");
 const transactionRoutes = require("./routes/transactions");
+const productCategoryRoutes = require("./routes/productCategories");
 
 // Health check and API info
 app.get("/", (req, res) => {
@@ -58,6 +59,7 @@ app.use("/v1/activity-log", activityRoutes);
 app.use("/v1/vouchers", voucherRoutes);
 app.use("/v1/discounts", discountRoutes);
 app.use("/v1/transactions", transactionRoutes);
+app.use("/v1/product/categories", productCategoryRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
