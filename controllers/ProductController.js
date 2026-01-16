@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const { Op } = require("sequelize");
+const { logActivity } = require("../helpers/activityLogger");
 
 exports.listProducts = async (req, res) => {
   try {
@@ -65,6 +66,14 @@ exports.createProduct = async (req, res) => {
       images: images || uploadedImages,
     });
 
+    await logActivity(
+      req,
+      "create",
+      "Product",
+      product.id,
+      `Created product ${product.name}`
+    );
+
     res.status(201).json({ message: "Product created successfully", product });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
@@ -102,6 +111,14 @@ exports.updateProduct = async (req, res) => {
     }
 
     await product.update(updateData);
+    await logActivity(
+      req,
+      "update",
+      "Product",
+      product.id,
+      `Updated product ${product.name}`
+    );
+
     res.json({ message: "Product updated successfully", product });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
@@ -119,7 +136,16 @@ exports.deleteProduct = async (req, res) => {
         .json({ error: "Not Found", message: "Product not found" });
     }
 
+    const productName = product.name;
     await product.destroy();
+    await logActivity(
+      req,
+      "delete",
+      "Product",
+      parseInt(id),
+      `Deleted product ${productName}`
+    );
+
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });

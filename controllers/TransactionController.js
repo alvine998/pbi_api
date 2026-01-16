@@ -1,6 +1,7 @@
 const Transaction = require("../models/Transaction");
 const Voucher = require("../models/Voucher");
 const { Op } = require("sequelize");
+const { logActivity } = require("../helpers/activityLogger");
 
 exports.listTransactions = async (req, res) => {
   try {
@@ -136,6 +137,14 @@ exports.createTransaction = async (req, res) => {
       notes,
     });
 
+    await logActivity(
+      req,
+      "create",
+      "Transaction",
+      transaction.id,
+      `Created transaction ${transaction.transactionNumber}`
+    );
+
     res.status(201).json(transaction);
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
@@ -155,6 +164,14 @@ exports.updateTransaction = async (req, res) => {
     }
 
     await transaction.update({ status, paymentStatus, notes });
+    await logActivity(
+      req,
+      "update",
+      "Transaction",
+      transaction.id,
+      `Updated transaction ${transaction.transactionNumber}`
+    );
+
     res.json({ message: "Transaction updated successfully", transaction });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
@@ -172,7 +189,16 @@ exports.deleteTransaction = async (req, res) => {
         .json({ error: "Not Found", message: "Transaction not found" });
     }
 
+    const trxNumber = transaction.transactionNumber;
     await transaction.destroy();
+    await logActivity(
+      req,
+      "delete",
+      "Transaction",
+      parseInt(id),
+      `Deleted transaction ${trxNumber}`
+    );
+
     res.json({ message: "Transaction deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });

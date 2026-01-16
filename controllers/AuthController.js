@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const { logActivity } = require("../helpers/activityLogger");
 
 exports.login = async (req, res) => {
   try {
@@ -13,6 +14,16 @@ exports.login = async (req, res) => {
         process.env.JWT_SECRET || "your_jwt_secret_key_here",
         { expiresIn: "24h" }
       );
+
+      // Log login activity
+      await logActivity(
+        { ...req, user: { id: user.id, email: user.email } },
+        "login",
+        "User",
+        user.id,
+        `User ${user.email} logged in`
+      );
+
       return res.json({ token });
     }
 
@@ -51,6 +62,15 @@ exports.register = async (req, res) => {
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || "your_jwt_secret_key_here",
       { expiresIn: "24h" }
+    );
+
+    // Log register activity
+    await logActivity(
+      { ...req, user: { id: user.id, email: user.email } },
+      "register",
+      "User",
+      user.id,
+      `New user ${user.email} registered`
     );
 
     const userResponse = user.toJSON();

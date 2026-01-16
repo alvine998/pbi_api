@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
+const { logActivity } = require("../helpers/activityLogger");
 
 exports.listUsers = async (req, res) => {
   try {
@@ -62,6 +63,14 @@ exports.createUser = async (req, res) => {
       password: hashedPassword,
     });
 
+    await logActivity(
+      req,
+      "create",
+      "User",
+      user.id,
+      `Created user ${user.email}`
+    );
+
     const userResponse = user.toJSON();
     delete userResponse.password;
 
@@ -93,6 +102,13 @@ exports.updateUser = async (req, res) => {
     }
 
     await user.update({ name, email, role, status, phone });
+    await logActivity(
+      req,
+      "update",
+      "User",
+      user.id,
+      `Updated user ${user.email}`
+    );
 
     const userResponse = user.toJSON();
     delete userResponse.password;
@@ -114,7 +130,16 @@ exports.deleteUser = async (req, res) => {
         .json({ error: "Not Found", message: "User not found" });
     }
 
+    const email = user.email;
     await user.destroy();
+    await logActivity(
+      req,
+      "delete",
+      "User",
+      parseInt(id),
+      `Deleted user ${email}`
+    );
+
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
