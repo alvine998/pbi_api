@@ -167,6 +167,26 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        Event: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            title: { type: "string" },
+            description: { type: "string" },
+            date: { type: "string", format: "date" },
+            time: { type: "string" },
+            location: { type: "string" },
+            image: { type: "string" },
+            category: { type: "string" },
+            status: {
+              type: "string",
+              enum: ["active", "cancelled", "completed"],
+            },
+            createdBy: { type: "integer" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
         Error: {
           type: "object",
           properties: {
