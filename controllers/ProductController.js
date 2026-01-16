@@ -51,15 +51,18 @@ exports.getProductById = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, price, category, description } = req.body;
-    const images = req.files ? req.files.map((f) => f.filename) : [];
+    const { name, price, category, categoryId, description, stock, images } =
+      req.body;
+    const uploadedImages = req.files ? req.files.map((f) => f.filename) : [];
 
     const product = await Product.create({
       name,
       price,
       category,
+      categoryId,
       description,
-      images,
+      stock: stock || 0,
+      images: images || uploadedImages,
     });
 
     res.status(201).json({ message: "Product created successfully", product });
@@ -71,8 +74,11 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, category, description } = req.body;
-    const images = req.files ? req.files.map((f) => f.filename) : undefined;
+    const { name, price, category, categoryId, description, stock, images } =
+      req.body;
+    const uploadedImages = req.files
+      ? req.files.map((f) => f.filename)
+      : undefined;
 
     const product = await Product.findByPk(id);
     if (!product) {
@@ -81,9 +87,18 @@ exports.updateProduct = async (req, res) => {
         .json({ error: "Not Found", message: "Product not found" });
     }
 
-    const updateData = { name, price, category, description };
+    const updateData = {
+      name,
+      price,
+      category,
+      categoryId,
+      description,
+      stock,
+    };
     if (images) {
       updateData.images = images;
+    } else if (uploadedImages) {
+      updateData.images = uploadedImages;
     }
 
     await product.update(updateData);

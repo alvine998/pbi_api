@@ -13,17 +13,29 @@ const Product = sequelize.define("Product", {
   category: {
     type: DataTypes.STRING,
   },
+  categoryId: {
+    type: DataTypes.INTEGER,
+  },
   description: {
     type: DataTypes.TEXT,
   },
+  stock: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   images: {
-    type: DataTypes.TEXT, // Store as JSON string or comma-separated
+    type: DataTypes.TEXT,
     get() {
       const value = this.getDataValue("images");
-      return value ? JSON.parse(value) : [];
+      if (!value) return [];
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
     },
     set(value) {
-      this.setDataValue("images", JSON.stringify(value));
+      this.setDataValue("images", JSON.stringify(value || []));
     },
   },
 });
