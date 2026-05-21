@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 const User = require("../models/User");
 const { logActivity } = require("../helpers/activityLogger");
 
@@ -119,6 +121,55 @@ exports.changePassword = async (req, res) => {
     res
       .status(401)
       .json({ error: "Unauthorized", message: "Invalid current password" });
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request", message: error.message });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Not Found", message: "User not found" });
+    }
+
+    const avatar = user.avatar;
+
+    await logActivity(
+      { ...req, user: { id: user.id, email: user.email, name: user.name } },
+      "delete_account",
+      "User",
+      user.id,
+      `User ${user.email} requested account deletion`
+    );
+
+    await user.destroy();
+
+    if (avatar) {
+      const avatarPath = path.join(__dirname, "..", "uploads", avatar);
+      fs.unlink(avatarPath, (error) => {
+        if (error && error.code !== "ENOENT") {
+          console.error("Failed to delete avatar:", error.message);
+        }
+      });
+    }
+
+    res.json({
+      message: "Account deleted successfully",
+      deletedData: [
+        "Account profile",
+        "Email address",
+        "Phone number",
+        "Password hash",
+        "Avatar file when available",
+      ],
+      retainedData: [
+        "Transaction, audit, security, and legal records may be retained for up to 90 days unless a longer period is required by law.",
+      ],
+    });
   } catch (error) {
     res.status(400).json({ error: "Bad Request", message: error.message });
   }

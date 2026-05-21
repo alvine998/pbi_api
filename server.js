@@ -39,6 +39,8 @@ const dashboardRoutes = require("./routes/dashboard");
 const eventRoutes = require("./routes/events");
 const mediaRoutes = require("./routes/media");
 const socialMediaRoutes = require("./routes/socialMedia");
+const accountDeletionRoutes = require("./routes/accountDeletion");
+const AccountDeletionController = require("./controllers/AccountDeletionController");
 
 // Health check and API info
 app.get("/", (req, res) => {
@@ -50,8 +52,10 @@ app.get("/", (req, res) => {
     apiPrefix: "/v1",
   });
 });
+app.get("/account-deletion", AccountDeletionController.getPolicyPage);
 
 app.use("/v1/auth", authRoutes);
+app.use("/v1/account-deletion", accountDeletionRoutes);
 app.use("/v1/users", userRoutes);
 app.use("/v1/products", productRoutes);
 app.use("/v1/aspirations", aspirationRoutes);

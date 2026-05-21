@@ -195,4 +195,24 @@ router.put(
  */
 router.post("/change-password", auth, AuthController.changePassword);
 
+/**
+ * @swagger
+ * /v1/auth/account:
+ *   delete:
+ *     summary: Delete the authenticated user's account
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Account deleted successfully
+ *       401:
+ *         description: No token provided
+ *       403:
+ *         description: Invalid or expired token
+ *       404:
+ *         description: User not found
+ */
+router.delete("/account", auth, AuthController.deleteAccount);
+
 module.exports = router;
