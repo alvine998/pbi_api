@@ -5,7 +5,7 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "PBI API Documentation",
-      version: "1.0.0",
+      version: "1.0.1",
       description: "API documentation for PBI Dashboard application",
     },
     servers: [
@@ -14,7 +14,7 @@ const options = {
         description: "Development server",
       },
       {
-        url: "http://154.26.137.37:4173",
+        url: "https://hello.pbi.web.id",
         description: "Production server",
       },
     ],
@@ -61,9 +61,13 @@ const options = {
           type: "object",
           properties: {
             id: { type: "integer" },
-            userName: { type: "string" },
-            category: { type: "string" },
+            type: {
+              type: "string",
+              enum: ["laporan", "aspirasi", "inspirasi"],
+            },
+            title: { type: "string" },
             content: { type: "string" },
+            attachment: { type: "string" },
             status: { type: "string", default: "Pending" },
             date: { type: "string", format: "date" },
             createdAt: { type: "string", format: "date-time" },

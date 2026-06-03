@@ -2,16 +2,23 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const Aspiration = sequelize.define("Aspiration", {
-  userName: {
+  type: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      isIn: [["laporan", "aspirasi", "inspirasi"]],
+    },
   },
-  category: {
+  title: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   content: {
     type: DataTypes.TEXT,
     allowNull: false,
+  },
+  attachment: {
+    type: DataTypes.STRING,
   },
   status: {
     type: DataTypes.STRING,

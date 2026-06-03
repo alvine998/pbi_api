@@ -1,20 +1,25 @@
 const Aspiration = require("../models/Aspiration");
 const { Op } = require("sequelize");
 
+const VALID_TYPES = ["laporan", "aspirasi", "inspirasi"];
+
 exports.listAspirations = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "", status } = req.query;
+    const { page = 1, limit = 10, search = "", status, type } = req.query;
     const offset = (page - 1) * limit;
 
     const where = {};
     if (search) {
       where[Op.or] = [
-        { userName: { [Op.like]: `%${search}%` } },
+        { title: { [Op.like]: `%${search}%` } },
         { content: { [Op.like]: `%${search}%` } },
       ];
     }
     if (status) {
       where.status = status;
+    }
+    if (type) {
+      where.type = type;
     }
 
     const { count, rows } = await Aspiration.findAndCountAll({
@@ -54,12 +59,33 @@ exports.getAspirationById = async (req, res) => {
 
 exports.createAspiration = async (req, res) => {
   try {
-    const { userName, category, content, status } = req.body;
+    const { type, title, content } = req.body;
+
+    if (!type || !VALID_TYPES.includes(type)) {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "type must be one of: laporan, aspirasi, inspirasi",
+      });
+    }
+
+    if (!title || !content) {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "title and content are required",
+      });
+    }
+
+    const attachment = req.file
+      ? `${req.protocol}://${req.get("host")}/uploads/aspirations/${
+          req.file.filename
+        }`
+      : null;
+
     const aspiration = await Aspiration.create({
-      userName,
-      category,
+      type,
+      title,
       content,
-      status,
+      attachment,
     });
     res.status(201).json(aspiration);
   } catch (error) {

@@ -1,7 +1,40 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const auth = require("../middleware/auth");
 const AspirationController = require("../controllers/AspirationController");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = "uploads/aspirations";
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "attachment-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = file.mimetype.startsWith("image/");
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error("Only image files are allowed"));
+  },
+});
 
 /**
  * @swagger
@@ -34,6 +67,12 @@ const AspirationController = require("../controllers/AspirationController");
  *         schema:
  *           type: string
  *         description: Filter by status
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [laporan, aspirasi, inspirasi]
+ *         description: Filter by type
  *     responses:
  *       200:
  *         description: List of aspirations
@@ -93,26 +132,27 @@ router.get("/:id", AspirationController.getAspirationById);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
- *               - userName
+ *               - type
+ *               - title
  *               - content
  *             properties:
- *               userName:
+ *               type:
  *                 type: string
- *                 example: John Doe
- *               category:
+ *                 enum: [laporan, aspirasi, inspirasi]
+ *                 example: aspirasi
+ *               title:
  *                 type: string
- *                 example: Feedback
+ *                 example: Perbaikan layanan anggota
  *               content:
  *                 type: string
- *                 example: This is my aspiration content
- *               status:
+ *                 example: Mohon ditambahkan fitur pelacakan laporan.
+ *               attachment:
  *                 type: string
- *                 enum: [Pending, Reviewed, Resolved]
- *                 default: Pending
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Aspiration created successfully
@@ -121,7 +161,12 @@ router.get("/:id", AspirationController.getAspirationById);
  *             schema:
  *               $ref: '#/components/schemas/Aspiration'
  */
-router.post("/", auth, AspirationController.createAspiration);
+router.post(
+  "/",
+  auth,
+  upload.single("attachment"),
+  AspirationController.createAspiration
+);
 
 /**
  * @swagger
