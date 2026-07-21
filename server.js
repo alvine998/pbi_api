@@ -12,8 +12,8 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors({ origin: "*" }));
 app.use(morgan("dev"));
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.json({ limit: "200mb" }));
+app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.use("/uploads", express.static("uploads"));
 
 // Swagger Documentation
@@ -78,7 +78,15 @@ app.use("/v1/social-media", socialMediaRoutes);
 // Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(400).json({
+
+  if (err.type === "entity.too.large" || err.status === 413) {
+    return res.status(413).json({
+      error: "Payload Too Large",
+      message: "Request body exceeds size limit (200mb)",
+    });
+  }
+
+  res.status(err.status || 400).json({
     error: "Validation Error",
     message: err.message || "Something went wrong",
     fields: err.fields || {},
