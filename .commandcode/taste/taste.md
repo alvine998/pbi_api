@@ -1,0 +1,2 @@
+- Prefers production-safe authentication implementations: verify third-party identity tokens server-side, avoid insecure fallbacks, and use explicit configured endpoints rather than guessed routes. Confidence: 0.95
+- Prefers strict API contracts with minimal, explicitly defined request and response payloads; authentication responses should include only the required fields. Confidence: 0.9

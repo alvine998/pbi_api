@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(npm:*)",
+      "Shell(node --check controllers/AuthController.js)",
+      "Shell(node --check routes/auth.js)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

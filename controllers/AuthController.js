@@ -1,9 +1,81 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const { OAuth2Client } = require("google-auth-library");
 const fs = require("fs");
 const path = require("path");
 const User = require("../models/User");
 const { logActivity } = require("../helpers/activityLogger");
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken || !process.env.GOOGLE_CLIENT_ID) {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "Google idToken and GOOGLE_CLIENT_ID are required",
+      });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload?.email || !payload.email_verified) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "Google account email is not verified",
+      });
+    }
+
+    let user = await User.findOne({ where: { email: payload.email } });
+    if (!user) {
+      user = await User.create({
+        name: payload.name || payload.email,
+        email: payload.email,
+        password: await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 12),
+        avatar: payload.picture || null,
+        role: "User",
+        status: "Active",
+      });
+    }
+
+    await user.update({ lastLogin: new Date() });
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || "your_jwt_secret_key_here",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
+    );
+
+    await logActivity(
+      { ...req, user: { id: user.id, email: user.email, name: user.name } },
+      "google_login",
+      "User",
+      user.id,
+      `User ${user.email} logged in with Google`
+    );
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "Invalid Google idToken",
+    });
+  }
+};
 
 exports.login = async (req, res) => {
   try {

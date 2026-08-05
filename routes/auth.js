@@ -48,6 +48,7 @@ const upload = multer({ dest: "uploads/" });
  *               $ref: '#/components/schemas/Error'
  */
 router.post("/login", AuthController.login);
+router.post("/google", AuthController.googleLogin);
 
 /**
  * @swagger
