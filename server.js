@@ -40,6 +40,7 @@ const eventRoutes = require("./routes/events");
 const mediaRoutes = require("./routes/media");
 const socialMediaRoutes = require("./routes/socialMedia");
 const accountDeletionRoutes = require("./routes/accountDeletion");
+const kycRoutes = require("./routes/kyc");
 const AccountDeletionController = require("./controllers/AccountDeletionController");
 
 // Health check and API info
@@ -74,6 +75,7 @@ app.use("/v1/dashboard", dashboardRoutes);
 app.use("/v1/events", eventRoutes);
 app.use("/v1/media", mediaRoutes);
 app.use("/v1/social-media", socialMediaRoutes);
+app.use("/v1/kyc", kycRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

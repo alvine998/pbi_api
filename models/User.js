@@ -35,6 +35,18 @@ const User = sequelize.define("User", {
   lastLogin: {
     type: DataTypes.DATE,
   },
+  kycStatus: {
+    type: DataTypes.STRING,
+    defaultValue: "unverified",
+  },
+  isKycVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  kycRejectionReason: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 });
 
 module.exports = User;
